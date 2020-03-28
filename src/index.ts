@@ -1,5 +1,5 @@
-import Server from "./Server"
+import IoServer from "./IoServer"
 
 const PORT:number = parseInt(process.env.port || "8080");
 
-new Server(PORT);
+new IoServer(PORT);

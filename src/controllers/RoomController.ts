@@ -1,14 +1,33 @@
 import express = require("express");
+import socketio = require("socket.io");
 import ARestAPIController from "./ARestAPIController";
+import IRoom from "./../IRoom";
+import MajorityPacketTypes from "./../MajorityPacketTypes";
+import MajorityPlayer from "./../MajorityPlayer";
 import MajorityRoom from "./../MajorityRoom";
+import IoServer from "./../IoServer";
 
 export default class RoomController extends ARestAPIController
 {
-	private rooms:Map<string, MajorityRoom> = new Map<string, MajorityRoom>();
+	private rooms:Map<string, IRoom> = new Map<string, IRoom>();
 	
 	constructor(app:express.Express)
 	{
 		super(app, "room");
+		IoServer.io.on("connection", (socket:socketio.Socket) => {
+			let player = new MajorityPlayer(socket.id, socket);
+			
+			player.on("ET:Majority:connection", (data:MajorityPacketTypes.Connection) => {
+				if (this.rooms.has(data.roomId)) {
+					player.username = data.username;
+					this.rooms.get(data.roomId).addPlayer(player);
+				}
+
+			});
+			socket.on("disconnect", () => {
+
+			});
+		});
 	}
 
 	/**
@@ -26,6 +45,20 @@ export default class RoomController extends ARestAPIController
 		return (output);
 	}
 	
+	/**
+	 * ```POST {url}/room/{id}```
+	 * Get a room.
+	 * If request succeed, the id of the created room is returned.
+	 */
+	protected get = (req:express.Request, res:express.Response):void =>
+	{
+
+	}
+	/**
+	 * ```POST {url}/room```
+	 * Creates a new room.
+	 * If request succeed, the id of the created room is returned.
+	 */
 	protected post = (req:express.Request, res:express.Response):void =>
 	{
 		const ID:string = this.generateId();
@@ -33,8 +66,23 @@ export default class RoomController extends ARestAPIController
 		this.rooms.set(ID, new MajorityRoom());
 		res.json({id: ID});
 	}
+
+	/**
+	 * ```DELETE {url}/room/{id}```
+	 * Delete a room.
+	 * If request succeed, the id of the deleted room is returned.
+	 * 
+	 * @urlparam id:string = An hexadecimal string representing the room's id.
+	 */
 	protected delete = (req:express.Request, res:express.Response):void =>
 	{
+		const ID:string = req.body.id;
 		
+		if (!ID)
+			res.status(400).json({error: "Bad request: There is no id at the end of the request."});
+		if (!this.rooms.has(ID))
+			res.status(404).json({error: `Room n°${ID} doesn't exists.`});
+		this.rooms.delete(ID);
+		res.json({id: ID});
 	}
 };

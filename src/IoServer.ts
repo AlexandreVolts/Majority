@@ -3,7 +3,7 @@ import socketio = require("socket.io");
 import bodyParser = require("body-parser");
 import http = require("http");
 
-export default class Server
+export default class IoServer
 {
 	private static readonly VIEWS_PATH:string = __dirname + "/../webapp/";
 	// This variable is a bit an architectural mess, if you have better I take !
@@ -17,8 +17,7 @@ export default class Server
 	{
 		this.PORT = port;
 		this.server = this.app.listen(this.PORT, this.initialise);
-		Server.io = socketio(this.server);
-		Server.io.on("connection", this.onConnection);
+		IoServer.io = socketio(this.server);
 	}
 
 	private initialise = (err:string):void =>
@@ -29,9 +28,10 @@ export default class Server
 		}
 		console.log(`Server is running on port ${this.PORT}.`);
 		this.app.use(express.static("webapp"));
+		this.app.use(bodyParser.json());
 		this.app.get("/", (req:express.Request, res:express.Response) => {
 			req;
-			res.sendFile(Server.VIEWS_PATH + "index.html");
+			res.sendFile(IoServer.VIEWS_PATH + "index.html");
 		});
 	}
 	private onConnection = (socket:socketio.Socket) =>
