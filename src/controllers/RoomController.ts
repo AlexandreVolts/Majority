@@ -1,7 +1,7 @@
 import express = require("express");
 import socketio = require("socket.io");
 import ARestAPIController from "./ARestAPIController";
-import IRoom from "./../IRoom";
+import ARoom from "./../ARoom";
 import MajorityPacketTypes from "./../MajorityPacketTypes";
 import MajorityPlayer from "./../MajorityPlayer";
 import MajorityRoom from "./../MajorityRoom";
@@ -9,7 +9,7 @@ import IoServer from "./../IoServer";
 
 export default class RoomController extends ARestAPIController
 {
-	private rooms:Map<string, IRoom> = new Map<string, IRoom>();
+	private rooms:Map<string, ARoom> = new Map<string, ARoom>();
 	
 	constructor(app:express.Express)
 	{
@@ -24,7 +24,7 @@ export default class RoomController extends ARestAPIController
 				}
 
 			});
-			socket.on("disconnect", () => {
+			player.on("disconnect", () => {
 
 			});
 		});
@@ -44,9 +44,18 @@ export default class RoomController extends ARestAPIController
 		for (output = id.toString(16).padStart(4, "0"); this.rooms.has(output); id++);
 		return (output);
 	}
+
+	/**
+	 * Converts all data from each room object.
+	 * Each new created object is a readable type for client.
+	 */
+	private generateMetadata():MajorityPacketTypes.Room
+	{
+
+	}
 	
 	/**
-	 * ```POST {url}/room/{id}```
+	 * ```GET {url}/room/{id}```
 	 * Get a room.
 	 * If request succeed, the id of the created room is returned.
 	 */

@@ -23,8 +23,13 @@ export default abstract class AIoPlayerSocket implements IPlayerSocket
 		data.command = event;
 		this.socket.emit(event, data);
 	}
+	public destroy():void
+	{
+		this.socket.removeAllListeners();
+	}
 	public getId():string
 	{
 		return (this.socket.id);
 	}
+	public abstract getData<T extends IPlayerData>():T;
 }

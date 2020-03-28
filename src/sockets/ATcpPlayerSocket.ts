@@ -1,9 +1,11 @@
 import net = require("net");
 import IPacket from "./IPacket";
+import IPlayerData from "./IPlayerData";
 import IPlayerSocket from "./IPlayerSocket";
 
 export default abstract class ATcpPlayerSocket implements IPlayerSocket
 {
+	private id:string = new Date().getTime().toString(16);
 	private socket:net.Socket = new net.Socket();
 	username:string;
 	
@@ -12,8 +14,9 @@ export default abstract class ATcpPlayerSocket implements IPlayerSocket
 		this.username = username;
 	}
 
-	/*
-	 * There are probably things to change to this function.
+	/* /!\ Temporary documentation
+	 * There are probably things to change inside this function.
+	 * I never used TCP socket on NodeJS, so I dunno bro :(
 	 */
 	public on<T extends IPacket>(event:string, callback:(data:T) => void)
 	{
@@ -34,6 +37,7 @@ export default abstract class ATcpPlayerSocket implements IPlayerSocket
 	}
 	public getId():string
 	{
-		return (this.socket.id);
+		return (this.id);
 	}
+	public abstract getData<T extends IPlayerData>():T;
 }

@@ -1,6 +1,10 @@
 import express = require("express");
 import IController from "./IController";
 
+/**
+ * This object create a Rest API Controller by instanciating all routes of a REST Controller
+ * You'll need to create a child class of this one when you will need to implement actions for each routes.
+ */
 export default abstract class ARestAPIController implements IController
 {
 	constructor(app:express.Express, route:string)

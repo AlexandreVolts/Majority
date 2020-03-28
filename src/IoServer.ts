@@ -1,7 +1,9 @@
-import express = require("express");
-import socketio = require("socket.io");
-import bodyParser = require("body-parser");
-import http = require("http");
+import express from "express";
+import socketio from "socket.io";
+import bodyParser from "body-parser";
+import http from "http";
+import IController from "./controllers/IController";
+import RoomController from "./controllers/RoomController";
 
 export default class IoServer
 {
@@ -11,7 +13,6 @@ export default class IoServer
 	private readonly PORT:number;
 	private app = express();
 	private server:http.Server;
-	private players:Map<string, socketio.Socket> = new Map<string, socketio.Socket>();
 
 	constructor(port:number)
 	{
@@ -33,16 +34,12 @@ export default class IoServer
 			req;
 			res.sendFile(IoServer.VIEWS_PATH + "index.html");
 		});
+		this.initControllers();
 	}
-	private onConnection = (socket:socketio.Socket) =>
+	private initControllers = () =>
 	{
-		this.players.set(socket.id, socket);
-		socket.on("disconnect", () => {
-			this.onDisconnect(socket);
-		});
-	}
-	private onDisconnect = (socket:socketio.Socket) =>
-	{
-		this.players.delete(socket.id);
+		const CONTROLLERS:IController[] = [
+			new RoomController(this.app)
+		];
 	}
 };

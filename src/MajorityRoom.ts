@@ -1,18 +1,21 @@
 import IPlayerSocket from "./sockets/IPlayerSocket";
-import IRoom from "./IRoom";
+import ARoom from "./ARoom";
 import MajorityPlayer from "./MajorityPlayer";
 
-export default class MajorityRoom implements IRoom
+export default class MajorityRoom extends ARoom
 {
-	players:Map<string, IPlayerSocket> = new Map<string, IPlayerSocket>();
-	
+	private static readonly ROOM_CAPACITY:number = 5;
+
 	constructor()
 	{
-
+		super(MajorityRoom.ROOM_CAPACITY);
 	}
 
-	public addPlayer(player:MajorityPlayer)
+	public addPlayer(player:IPlayerSocket)
 	{
-		this.players.set(player.getId(), player);
+		super.addPlayer(player);
+		player.on("disconnect", () => {
+			this.removePlayer(player);
+		});
 	}
 };
