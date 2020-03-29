@@ -1,5 +1,6 @@
 import socketio = require("socket.io");
 import IPacket from "./IPacket";
+import IPlayerData from "./IPlayerData";
 import IPlayerSocket from "./IPlayerSocket";
 
 export default abstract class AIoPlayerSocket implements IPlayerSocket
@@ -31,5 +32,9 @@ export default abstract class AIoPlayerSocket implements IPlayerSocket
 	{
 		return (this.socket.id);
 	}
-	public abstract getData<T extends IPlayerData>():T;
+	public getIp():string
+	{
+		return (this.socket.handshake.address);
+	}
+	public abstract getData():IPlayerData;
 }

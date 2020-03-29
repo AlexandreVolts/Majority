@@ -35,5 +35,7 @@ export default interface IPlayerSocket
 	 */
 	getId():string;
 
-	getData<T extends IPlayerData>():T;
+	getIp():string;
+
+	getData():IPlayerData;
 }

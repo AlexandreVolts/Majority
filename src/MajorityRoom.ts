@@ -1,6 +1,5 @@
 import IPlayerSocket from "./sockets/IPlayerSocket";
 import ARoom from "./ARoom";
-import MajorityPlayer from "./MajorityPlayer";
 
 export default class MajorityRoom extends ARoom
 {
@@ -10,12 +9,12 @@ export default class MajorityRoom extends ARoom
 	{
 		super(MajorityRoom.ROOM_CAPACITY);
 	}
-
-	public addPlayer(player:IPlayerSocket)
+	
+	public addPlayer(player:IPlayerSocket):boolean
 	{
-		super.addPlayer(player);
 		player.on("disconnect", () => {
-			this.removePlayer(player);
+			
 		});
+		return (super.addPlayer(player));
 	}
 };

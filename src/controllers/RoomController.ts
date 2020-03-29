@@ -18,9 +18,11 @@ export default class RoomController extends ARestAPIController
 			let player = new MajorityPlayer(socket.id, socket);
 			
 			player.on("ET:Majority:connection", (data:MajorityPacketTypes.Connection) => {
-				if (this.rooms.has(data.roomId)) {
+				let room = this.rooms.get(data.roomId);
+				
+				if (room) {
 					player.username = data.username;
-					this.rooms.get(data.roomId).addPlayer(player);
+					room.addPlayer(player);
 				}
 
 			});
@@ -31,8 +33,7 @@ export default class RoomController extends ARestAPIController
 	}
 
 	/**
-	 * This method generates an id for each created room.
-	 * The id is based on room's size + an optional number in case of the id is already taken by another room.
+	 * The generated id is based on room's size + an optional number in case of the id is already taken by another room.
 	 *
 	 * @returns The created room's id, as an hexadecimal string.
 	 */
@@ -44,25 +45,38 @@ export default class RoomController extends ARestAPIController
 		for (output = id.toString(16).padStart(4, "0"); this.rooms.has(output); id++);
 		return (output);
 	}
-
-	/**
-	 * Converts all data from each room object.
-	 * Each new created object is a readable type for client.
-	 */
-	private generateMetadata():MajorityPacketTypes.Room
-	{
-
-	}
 	
 	/**
 	 * ```GET {url}/room/{id}```
 	 * Get a room.
-	 * If request succeed, the id of the created room is returned.
+	 * If request succeed, returns a room as Room object.
 	 */
 	protected get = (req:express.Request, res:express.Response):void =>
 	{
+		const ID:string = req.body.id;
+		let room:ARoom|undefined = this.rooms.get(ID);
 
+		if (!room) {
+			res.status(404).json(`Room n°${ID} doesn't exists.`);
+			return;
+		}
+		res.json({id: ID, players: room.getPlayersData()});
 	}
+
+	/**
+	 * ```GET {url}/room```
+	 * Return all rooms as an array of Rooms.
+	 */
+	protected getAll = (req:express.Request, res:express.Response):void =>
+	{
+		let output:any[] = [];
+
+		this.rooms.forEach((room:ARoom, key:string) => {
+			output.push({id: key, players: room.getPlayersData()});
+		});
+		res.json(output);
+	}
+	
 	/**
 	 * ```POST {url}/room```
 	 * Creates a new room.
@@ -77,6 +91,15 @@ export default class RoomController extends ARestAPIController
 	}
 
 	/**
+	 * I don't think it will be usefull to implement this method...
+	 */
+	protected put = (req:express.Request, res:express.Response):void =>
+	{
+		req;
+		res.json({});
+	}
+
+	/**
 	 * ```DELETE {url}/room/{id}```
 	 * Delete a room.
 	 * If request succeed, the id of the deleted room is returned.
@@ -86,11 +109,9 @@ export default class RoomController extends ARestAPIController
 	protected delete = (req:express.Request, res:express.Response):void =>
 	{
 		const ID:string = req.body.id;
-		
-		if (!ID)
-			res.status(400).json({error: "Bad request: There is no id at the end of the request."});
+
 		if (!this.rooms.has(ID))
-			res.status(404).json({error: `Room n°${ID} doesn't exists.`});
+			res.status(404).json(`Room n°${ID} doesn't exists.`);
 		this.rooms.delete(ID);
 		res.json({id: ID});
 	}

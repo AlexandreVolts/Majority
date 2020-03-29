@@ -29,6 +29,7 @@ export default class IoServer
 		}
 		console.log(`Server is running on port ${this.PORT}.`);
 		this.app.use(express.static("webapp"));
+		this.app.use(bodyParser.urlencoded({extended: true}));
 		this.app.use(bodyParser.json());
 		this.app.get("/", (req:express.Request, res:express.Response) => {
 			req;
@@ -41,5 +42,8 @@ export default class IoServer
 		const CONTROLLERS:IController[] = [
 			new RoomController(this.app)
 		];
+
+		for (let i= CONTROLLERS.length - 1; i >= 0; i--)
+			CONTROLLERS[i].init();
 	}
 };

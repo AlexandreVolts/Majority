@@ -6,11 +6,24 @@ export default abstract class ARoom
 {
 	protected players:Map<string, IPlayerSocket> = new Map<string, IPlayerSocket>();
 
-	constructor(protected roomCapacity:number = 10)
+	constructor(protected roomCapacity:number = 2)
 	{
 
 	}
 	
+	private isPlayerAlreadyIn(player:IPlayerSocket):boolean
+	{
+		let output = this.players.has(player.getId());
+		
+		if (output)
+			return (true);
+		this.players.forEach((p:IPlayerSocket) => {
+			if (p.getIp() == player.getIp())
+				output = true;
+		});
+		return (output);
+	}
+
 	/**
 	 * Send a messages to all users of a room.
 	 *
@@ -23,18 +36,46 @@ export default abstract class ARoom
 			player.send(event, data);
 		});
 	}
-	public addPlayer(player:IPlayerSocket)
+
+	/**
+	 * Add a player to the room. The player will be refused the room is filled.
+	 * If player is already inside the room, its old socket is destroyed and replaced by the new.
+	 * Returns true if the player was successfully added, false otherwise.player
+	 *
+	 * @params player:IPlayerSocket
+	 * @returns A boolean indicates whether or not the player has been successfully added.
+	 */
+	public addPlayer(player:IPlayerSocket):boolean
 	{
+		this.removePlayer(player);
+		if (this.players.size >= this.roomCapacity)
+			return (false);
 		this.players.set(player.getId(), player);
+		return (true);
 	}
-	public removePlayer(player:IPlayerSocket)
+
+	/**
+	 * Remove a player from the room.
+	 * Returns true if the player was successfully removed, false otherwise.
+	 *
+	 * @params player:IPlayerSocket
+	 * @returns A boolean indicates whether or not the player has been successfully removed.
+	 */
+	public removePlayer(player:IPlayerSocket):boolean
 	{
-		if (this.players.has(player.getId()))
-			this.players.delete(player.getId());
+		let p:IPlayerSocket|undefined = this.players.get(player.getId());
+
+		if (!p)
+			return (false);
+		if (this.isPlayerAlreadyIn(p)) {
+			p.destroy();
+			this.players.delete(p.getId());
+		}
+		return (true);
 	}
-	public getPlayersData<T extends IPlayerData>():T[]
+	public getPlayersData():IPlayerData[]
 	{
-		let output:T[] = [];
+		let output:IPlayerData[] = [];
 
 		this.players.forEach((player:IPlayerSocket) => {
 			output.push(player.getData());

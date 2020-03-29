@@ -14,21 +14,21 @@ export default class MajorityPlayer extends AIoPlayerSocket implements MajorityP
 	 * Create a virtual representation of a majority player.
 	 *
 	 * @params username:string
-	 * @params socket:socketio.Socket = /!\ This parameter is temporary (It breaks abstraction chain)
+	 * @params socket:socketio.Socket = /!\ This parameter is temporary (It breaks the abstraction chain)
 	 */
 	constructor(username:string, socket:socketio.Socket)
 	{
 		super(username, socket);
 	}
 
-	public getData = <T extends IPlayerData>():T =>
+	public getData = ():IPlayerData =>
 	{
 		let output:MajorityPlayerData = {
 			username: this.username,
 			lifes: this.lifes,
 			score: this.score
 		};
-		
+
 		return (output);
 	}
 }
