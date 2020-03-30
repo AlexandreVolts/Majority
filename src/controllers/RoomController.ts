@@ -13,7 +13,7 @@ export default class RoomController extends ARestAPIController
 	
 	constructor(app:express.Express)
 	{
-		super(app, "room");
+		super(app, "/room");
 		IoServer.io.on("connection", (socket:socketio.Socket) => {
 			let player = new MajorityPlayer(socket.id, socket);
 			
@@ -24,10 +24,6 @@ export default class RoomController extends ARestAPIController
 					player.username = data.username;
 					room.addPlayer(player);
 				}
-
-			});
-			player.on("disconnect", () => {
-
 			});
 		});
 	}
@@ -91,7 +87,7 @@ export default class RoomController extends ARestAPIController
 	}
 
 	/**
-	 * I don't think it will be usefull to implement this method...
+	 * This method hasn't to be implemented yet.
 	 */
 	protected put = (req:express.Request, res:express.Response):void =>
 	{
@@ -100,19 +96,11 @@ export default class RoomController extends ARestAPIController
 	}
 
 	/**
-	 * ```DELETE {url}/room/{id}```
-	 * Delete a room.
-	 * If request succeed, the id of the deleted room is returned.
-	 * 
-	 * @urlparam id:string = An hexadecimal string representing the room's id.
+	 * This method hasn't to be implemented yet.
 	 */
 	protected delete = (req:express.Request, res:express.Response):void =>
 	{
-		const ID:string = req.body.id;
-
-		if (!this.rooms.has(ID))
-			res.status(404).json(`Room n°${ID} doesn't exists.`);
-		this.rooms.delete(ID);
-		res.json({id: ID});
+		req;
+		res.json({});
 	}
 };

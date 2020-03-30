@@ -10,6 +10,11 @@ export default class MajorityRoom extends ARoom
 		super(MajorityRoom.ROOM_CAPACITY);
 	}
 	
+	protected run()
+	{
+		
+	}
+	
 	public addPlayer(player:IPlayerSocket):boolean
 	{
 		player.on("disconnect", () => {

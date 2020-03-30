@@ -4,19 +4,17 @@ import bodyParser from "body-parser";
 import http from "http";
 import IController from "./controllers/IController";
 import RoomController from "./controllers/RoomController";
+import TemporaryControllerThatShouldBeReplacedByABeautifulWebApp from "./controllers/TemporaryControllerThatShouldBeReplacedByABeautifulWebApp";
 
 export default class IoServer
 {
-	private static readonly VIEWS_PATH:string = __dirname + "/../webapp/";
 	// This variable is a bit an architectural mess, if you have better I take !
 	public static io:socketio.Server;
-	private readonly PORT:number;
 	private app = express();
 	private server:http.Server;
 
-	constructor(port:number)
+	constructor(private readonly PORT:number)
 	{
-		this.PORT = port;
 		this.server = this.app.listen(this.PORT, this.initialise);
 		IoServer.io = socketio(this.server);
 	}
@@ -31,19 +29,16 @@ export default class IoServer
 		this.app.use(express.static("webapp"));
 		this.app.use(bodyParser.urlencoded({extended: true}));
 		this.app.use(bodyParser.json());
-		this.app.get("/", (req:express.Request, res:express.Response) => {
-			req;
-			res.sendFile(IoServer.VIEWS_PATH + "index.html");
-		});
-		this.initControllers();
+		this.initRoutes();
 	}
-	private initControllers = () =>
+	private initRoutes = () =>
 	{
-		const CONTROLLERS:IController[] = [
+		const ROUTES:IController[] = [
+			new TemporaryControllerThatShouldBeReplacedByABeautifulWebApp(this.app),
 			new RoomController(this.app)
 		];
-
-		for (let i= CONTROLLERS.length - 1; i >= 0; i--)
-			CONTROLLERS[i].init();
+		
+		for (let i= ROUTES.length - 1; i >= 0; i--)
+			ROUTES[i].initRoutes();
 	}
 };

@@ -1,4 +1,4 @@
-import IoServer from "./IoServer"
+import IoServer from "./IoServer";
 
 const PORT:number = parseInt(process.env.port || "8080");
 

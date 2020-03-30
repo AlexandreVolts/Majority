@@ -4,9 +4,10 @@ import IPlayerData from "./IPlayerData";
 export default interface IPlayerSocket
 {
 	username:string;
+	readonly ID:string;
 	
 	/**
-	 * Receive data from a client-side socket.
+	 * Set a callback to handle data received from an event.
 	 * Format: ```{command: "Command name", param1: "value1", param2: ...}```
 	 *
 	 * @params event:string
@@ -28,12 +29,6 @@ export default interface IPlayerSocket
 	 * So this function disable all listeners and destroy the socket if needed.
 	 */
 	destroy():void;
-
-	/**
-	 * Returns the id of the socket.
-	 * It is possible to implement multiple ways for id generations.
-	 */
-	getId():string;
 
 	getIp():string;
 

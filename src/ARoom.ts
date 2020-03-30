@@ -4,6 +4,7 @@ import IPlayerSocket from "./sockets/IPlayerSocket";
 
 export default abstract class ARoom
 {
+	private hasStarted:boolean = false;
 	protected players:Map<string, IPlayerSocket> = new Map<string, IPlayerSocket>();
 
 	constructor(protected roomCapacity:number = 2)
@@ -13,7 +14,7 @@ export default abstract class ARoom
 	
 	private isPlayerAlreadyIn(player:IPlayerSocket):boolean
 	{
-		let output = this.players.has(player.getId());
+		let output = this.players.has(player.ID);
 		
 		if (output)
 			return (true);
@@ -24,6 +25,12 @@ export default abstract class ARoom
 		return (output);
 	}
 
+	/**
+	 * This method will automatically be launched when the room is filled.
+	 * You must override this method to implement your game logic.
+	 */
+	protected abstract run():void;
+	
 	/**
 	 * Send a messages to all users of a room.
 	 *
@@ -48,9 +55,13 @@ export default abstract class ARoom
 	public addPlayer(player:IPlayerSocket):boolean
 	{
 		this.removePlayer(player);
-		if (this.players.size >= this.roomCapacity)
+		if (this.players.size > this.roomCapacity)
 			return (false);
-		this.players.set(player.getId(), player);
+		this.players.set(player.ID, player);
+		if (!this.hasStarted && this.players.size == this.roomCapacity) {
+			this.hasStarted = true;
+			this.run();
+		}
 		return (true);
 	}
 
@@ -63,13 +74,13 @@ export default abstract class ARoom
 	 */
 	public removePlayer(player:IPlayerSocket):boolean
 	{
-		let p:IPlayerSocket|undefined = this.players.get(player.getId());
+		let p:IPlayerSocket|undefined = this.players.get(player.ID);
 
 		if (!p)
 			return (false);
 		if (this.isPlayerAlreadyIn(p)) {
 			p.destroy();
-			this.players.delete(p.getId());
+			this.players.delete(p.ID);
 		}
 		return (true);
 	}

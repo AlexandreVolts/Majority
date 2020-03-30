@@ -7,18 +7,18 @@ import IController from "./IController";
  */
 export default abstract class ARestAPIController implements IController
 {
-	constructor(private app:express.Express, private route:string)
+	constructor(private app:express.Express, private readonly ROUTE:string)
 	{
 		
 	}
 	
-	public init():void
+	public initRoutes():void
 	{
-		this.app.get(`/${this.route}/:id`, this.get);
-		this.app.get(`/${this.route}`, this.getAll);
-		this.app.post(`/${this.route}`, this.post);
-		this.app.put(`/${this.route}/:id`, this.put);
-		this.app.delete(`/${this.route}/:id`, this.delete);
+		this.app.get(`${this.ROUTE}/:id`, this.get);
+		this.app.get(`${this.ROUTE}`, this.getAll);
+		this.app.post(`${this.ROUTE}`, this.post);
+		this.app.put(`${this.ROUTE}/:id`, this.put);
+		this.app.delete(`${this.ROUTE}/:id`, this.delete);
 	}
 	protected abstract get(req:express.Request, res:express.Response):void;
 	protected abstract getAll(req:express.Request, res:express.Response):void;

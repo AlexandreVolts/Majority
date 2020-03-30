@@ -5,7 +5,7 @@ import IPlayerSocket from "./IPlayerSocket";
 
 export default abstract class ATcpPlayerSocket implements IPlayerSocket
 {
-	private id:string = new Date().getTime().toString(16);
+	readonly ID:string = new Date().getTime().toString(16);
 	username:string;
 	
 	constructor(username:string, private socket:net.Socket)
@@ -33,10 +33,6 @@ export default abstract class ATcpPlayerSocket implements IPlayerSocket
 	{
 		this.socket.removeAllListeners();
 		this.socket.destroy();
-	}
-	public getId():string
-	{
-		return (this.id);
 	}
 	public getIp():string
 	{
