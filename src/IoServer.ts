@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import http from "http";
 import IController from "./controllers/IController";
 import RoomController from "./controllers/RoomController";
-import TemporaryControllerThatShouldBeReplacedByABeautifulWebApp from "./controllers/TemporaryControllerThatShouldBeReplacedByABeautifulWebApp";
+import TemporaryControllerThatWillBeABeautifulApp from "./controllers/TemporaryControllerThatWillBeABeautifulApp";
 
 export default class IoServer
 {
@@ -34,7 +34,7 @@ export default class IoServer
 	private initRoutes = () =>
 	{
 		const ROUTES:IController[] = [
-			new TemporaryControllerThatShouldBeReplacedByABeautifulWebApp(this.app),
+			new TemporaryControllerThatWillBeABeautifulApp(this.app),
 			new RoomController(this.app)
 		];
 		

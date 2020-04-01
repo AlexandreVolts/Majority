@@ -14,12 +14,10 @@ export default abstract class ARoom
 	
 	private isPlayerAlreadyIn(player:IPlayerSocket):boolean
 	{
-		let output = this.players.has(player.ID);
-		
-		if (output)
-			return (true);
+		let output = false;
+
 		this.players.forEach((p:IPlayerSocket) => {
-			if (p.getIp() == player.getIp())
+			if (p.getIp() === player.getIp())
 				output = true;
 		});
 		return (output);
@@ -74,11 +72,7 @@ export default abstract class ARoom
 	 */
 	public removePlayer(player:IPlayerSocket):boolean
 	{
-		let p:IPlayerSocket|undefined = this.players.get(player.ID);
-
-		if (!p)
-			return (false);
-		if (this.isPlayerAlreadyIn(p)) {
+		if (this.isPlayerAlreadyIn(player)) {
 			p.destroy();
 			this.players.delete(p.ID);
 		}

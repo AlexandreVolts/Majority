@@ -8,7 +8,8 @@ export default interface IPlayerSocket
 	
 	/**
 	 * Set a callback to handle data received from an event.
-	 * Format: ```{command: "Command name", param1: "value1", param2: ...}```
+	 * Format of received data: 
+	 * ```{command: "Command name", param1: "value1", param2: ...}```
 	 *
 	 * @params event:string
 	 * @params callback:(data:<T extends IPacket>) = Describe what the program must do with data (passed as parameter)
@@ -17,7 +18,8 @@ export default interface IPlayerSocket
 	
 	/**
 	 * Receive data from a server-side socket.
-	 * Format: ```{command: "Command name", param1: "value1", param2: ...}```
+	 * Format of data to send: 
+	 * ```{command: "Command name", param1: "value1", param2: ...}```
 	 *
 	 * @params event:string
 	 * @params data:<T extends IPacket>

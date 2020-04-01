@@ -12,6 +12,10 @@ export default abstract class ARestAPIController implements IController
 		
 	}
 	
+	/**
+	 * Link the routes to their corresponding HTTP request.
+	 * This method MUST be called, otherwise the Express app will not care about your routes.
+	 */
 	public initRoutes():void
 	{
 		this.app.get(`${this.ROUTE}/:id`, this.get);

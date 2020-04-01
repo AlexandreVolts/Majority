@@ -49,7 +49,7 @@ export default class RoomController extends ARestAPIController
 	 */
 	protected get = (req:express.Request, res:express.Response):void =>
 	{
-		const ID:string = req.body.id;
+		const ID:string = req.params.id;
 		let room:ARoom|undefined = this.rooms.get(ID);
 
 		if (!room) {
